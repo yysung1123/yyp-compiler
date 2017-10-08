@@ -5,6 +5,7 @@
 #define tokenInteger(t, i) {LIST; if (Opt_T) printf("<%s: %d>\n", #t, (i));}
 #define tokenString(t, s)  {LIST; if (Opt_T) printf("<%s: %s>\n", #t, (s));}
 #define tokenKeyword(t)    {LIST; if (Opt_T) printf("<KW%s>\n", (t));}
+#define tokenStr(t)        {LIST; if (Opt_T) printf("<%s>\n", (t));}
 #define MAX_LINE_LENG      256
 
 int Opt_S = 1;
@@ -14,6 +15,7 @@ char buf[MAX_LINE_LENG];
 char string_buf[MAX_LINE_LENG];
 %}
 
+delimiter [,;:\(\)\[\]]
 keyword array|begin|boolean|def|do|else|end|false|for|integer|if|of|print|read|real|string|then|to|true|return|var|while
 digit   [0-9]
 letter  [a-zA-Z]
@@ -25,6 +27,8 @@ scientific  (0*{integer}|{float})[eE][+-]?0*{integer}
 string \"([^"\n]*\"{2})*[^"\n]*\"
 
 %%
+  /* delimiters */
+{delimiter}     { tokenStr(yytext) }
   /* keywords */
 {keyword}   { tokenKeyword(yytext) }
   /* identifier */
