@@ -11,6 +11,7 @@ int Opt_S = 1;
 int Opt_T = 1;
 int linenum = 1;
 char buf[MAX_LINE_LENG];
+char string_buf[MAX_LINE_LENG];
 %}
 
 keyword array|begin|boolean|def|do|else|end|false|for|integer|if|of|print|read|real|string|then|to|true|return|var|while
@@ -21,6 +22,7 @@ integer (0|[1-9]{digit}*)
 octal_integer   0[0-7]+
 float   0*{integer}\.{digit}+
 scientific  (0*{integer}|{float})[eE][+-]?0*{integer}
+string \"([^"\n]*\"{2})*[^"\n]*\"
 
 %%
   /* keywords */
@@ -34,6 +36,16 @@ scientific  (0*{integer}|{float})[eE][+-]?0*{integer}
 {float} { tokenString(float, yytext) }
   /* scientific notations */
 {scientific}    { tokenString(scientific, yytext) }
+  /* string constants */
+{string}    {
+              int len = 0;
+              for(int i = 1; i < yyleng - 1; ++i){
+                string_buf[len++] = yytext[i];
+                if(yytext[i] == '\"' && yytext[i + 1] == '\"') ++i;
+              }
+              string_buf[len] = '\0';
+              tokenString(string, string_buf);
+            }
 \n      {
           LIST;
           if (Opt_S)
