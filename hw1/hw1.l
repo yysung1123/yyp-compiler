@@ -4,6 +4,7 @@
 #define tokenChar(t)       {LIST; if (Opt_T) printf("<%c>\n", (t));}
 #define tokenInteger(t, i) {LIST; if (Opt_T) printf("<%s: %d>\n", #t, (i));}
 #define tokenString(t, s)  {LIST; if (Opt_T) printf("<%s: %s>\n", #t, (s));}
+#define tokenKeyword(t)    {LIST; if (Opt_T) printf("<KW%s>\n", (t));}
 #define MAX_LINE_LENG      256
 
 int Opt_S = 1;
@@ -12,8 +13,11 @@ int linenum = 1;
 char buf[MAX_LINE_LENG];
 %}
 
+keyword array|begin|boolean|def|do|else|end|false|for|integer|if|of|print|read|real|string|then|to|true|return|var|while
+
 %%
-"("     { tokenChar('('); }
+  /* keywords */
+{keyword}   { tokenKeyword(yytext) }
 \n      {
           LIST;
           if (Opt_S)
