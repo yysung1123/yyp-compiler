@@ -14,10 +14,15 @@ char buf[MAX_LINE_LENG];
 %}
 
 keyword array|begin|boolean|def|do|else|end|false|for|integer|if|of|print|read|real|string|then|to|true|return|var|while
+digit   [0-9]
+letter  [a-zA-Z]
+identifier  {letter}({letter}|{digit})*
 
 %%
   /* keywords */
 {keyword}   { tokenKeyword(yytext) }
+  /* identifier */
+{identifier}    { tokenString(id, yytext) }
 \n      {
           LIST;
           if (Opt_S)
