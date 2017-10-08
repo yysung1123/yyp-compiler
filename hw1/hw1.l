@@ -16,6 +16,7 @@ char string_buf[MAX_LINE_LENG];
 %}
 
 delimiter [,;:\(\)\[\]]
+operation (\+)|(\-)|(\*)|(\/)|mod|:=|<|<=|<>|>=|>|=|and|or|not
 keyword array|begin|boolean|def|do|else|end|false|for|integer|if|of|print|read|real|string|then|to|true|return|var|while
 digit   [0-9]
 letter  [a-zA-Z]
@@ -25,10 +26,13 @@ octal_integer   0[0-7]+
 float   0*{integer}\.{digit}+
 scientific  (0*{integer}|{float})[eE][+-]?0*{integer}
 string \"([^"\n]*\"{2})*[^"\n]*\"
+space   [ \t]+
 
 %%
   /* delimiters */
 {delimiter}     { tokenStr(yytext) }
+  /* operations */
+{operation}     { tokenStr(yytext) }
   /* keywords */
 {keyword}   { tokenKeyword(yytext) }
   /* identifier */
@@ -50,8 +54,10 @@ string \"([^"\n]*\"{2})*[^"\n]*\"
               string_buf[len] = '\0';
               tokenString(string, string_buf);
             }
+  /* whitespaces */
+{space} { LIST; }
 \n      {
-          LIST;
+          //LIST;
           if (Opt_S)
             printf("%d: %s\n", linenum, buf);
           linenum++;
