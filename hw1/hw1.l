@@ -17,12 +17,23 @@ keyword array|begin|boolean|def|do|else|end|false|for|integer|if|of|print|read|r
 digit   [0-9]
 letter  [a-zA-Z]
 identifier  {letter}({letter}|{digit})*
+integer (0|[1-9]{digit}*)
+octal_integer   0[0-7]+
+float   0*{integer}\.{digit}+
+scientific  (0*{integer}|{float})[eE][+-]?0*{integer}
 
 %%
   /* keywords */
 {keyword}   { tokenKeyword(yytext) }
   /* identifier */
 {identifier}    { tokenString(id, yytext) }
+  /* integer constants */
+{integer}   { tokenString(integer, yytext) }
+{octal_integer} { tokenString(oct_integer, yytext) }
+  /* floating-point constants */
+{float} { tokenString(float, yytext) }
+  /* scientific notations */
+{scientific}    { tokenString(scientific, yytext) }
 \n      {
           LIST;
           if (Opt_S)
