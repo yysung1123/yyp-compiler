@@ -28,7 +28,19 @@ scientific  (0*{integer}|{float})[eE][+-]?0*{integer}
 string \"([^"\n]*\"{2})*[^"\n]*\"
 space   [ \t]+
 
+%x CCOMMENT
+
 %%
+  /* c-style comments */
+"/*"    { LIST; BEGIN CCOMMENT; }
+<CCOMMENT>.     { LIST; }
+<CCOMMENT>"*/"  { LIST; BEGIN INITIAL; }
+  /* c++-style comments */
+"//&S+".*   { LIST; Opt_S = 1; }
+"//&S-".*   { LIST; Opt_S = 0; }
+"//&T+".*   { LIST; Opt_T = 1; }
+"//&T-".*   { LIST; Opt_T = 0; }
+"//".*  { LIST; }
   /* delimiters */
 {delimiter}     { tokenStr(yytext) }
   /* operations */
@@ -56,7 +68,7 @@ space   [ \t]+
             }
   /* whitespaces */
 {space} { LIST; }
-\n      {
+<INITIAL,CCOMMENT>\n    {
           //LIST;
           if (Opt_S)
             printf("%d: %s\n", linenum, buf);
