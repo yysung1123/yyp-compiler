@@ -68,6 +68,11 @@ space   [ \t]+
             }
   /* whitespaces */
 {space} { LIST; }
+  /* invalid input */
+.       {
+          printf("error at line %d: bad character \"%s\"\n",linenum,yytext);
+          exit(0);
+        }
 <INITIAL,CCOMMENT>\n    {
           //LIST;
           if (Opt_S)
